@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t erant10/react-test -f ./client/Dockerfile.dev ./client
+
+scripts:
+  - docker run -e CI=true erant10/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t erant10/multi-client ./client
+  - docker build -t erant10/multi-nginx ./nginx
+  - docker build -t erant10/multi-server ./server
+  - docker build -t erant10/multi-worker ./worker
+  # log in to docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # push these images to docker-hub
+  - docker push erant10/multi-client
+  - docker push erant10/multi-nginx
+  - docker push erant10/multi-server
+  - docker push erant10/multi-worker
