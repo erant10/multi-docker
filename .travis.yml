@@ -6,7 +6,7 @@ before_install:
   - docker build -t erant10/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run -it erant10/react-test npm run test -- --coverage
+  - docker run erant10/react-test npm test -- --coverage
 
 after_success:
   - docker build -t erant10/multi-client ./client
